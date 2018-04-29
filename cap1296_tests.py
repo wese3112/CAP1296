@@ -9,9 +9,9 @@ class TestCAP1296Driver(unittest.TestCase):
             ([], b'\x00'),
             ([0], b'\x01'),
             ([4], b'\x10'),
-            ([1,2], b'\x06'),
-            ([2,5], b'\x24'),
-            ([0,1,2,3,4,5], b'\x3f'),
+            ([1, 2], b'\x06'),
+            ([2, 5], b'\x24'),
+            ([0, 1, 2, 3, 4, 5], b'\x3f'),
         )
 
         for keys, output in input_result:
@@ -19,6 +19,7 @@ class TestCAP1296Driver(unittest.TestCase):
         
         for default in [bytes([ii]) for ii in (13, 52, 1, 32)]:
             self.assertEqual(cap1296._keys_to_byte([], default=default), default)
+
 
 if __name__ == '__main__':
     unittest.main()

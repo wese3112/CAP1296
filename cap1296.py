@@ -1,7 +1,8 @@
 try:
     from micropython import const
-except ModuleNotFoundError:
-    const = lambda c: c
+except ImportError:
+    def const(var):
+        return var
 
 # important registers
 MAIN_CONTROL = const(0x00)
@@ -11,8 +12,9 @@ INTERRUPT_ENABLE = const(0x27)
 SIGNAL_GUARD_ENABLE = const(0x29)
 MULTIPLE_TOUCH_CONFIG = const(0x2A)
 
+
 def _keys_to_byte(keys, default=b'\x00'):
-    return bytes([sum(map(lambda b: 1<<b, keys))]) if keys else default
+    return bytes([sum(map(lambda b: 1 << b, keys))]) if keys else default
 
 
 class CAP1296:
