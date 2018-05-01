@@ -22,7 +22,7 @@ def _keys_to_byte(keys: list, default=b'\x00') -> bytes:
 
 def _byte_to_keys(keys_as_byte: bytes, num_keys=6) -> list:
     """Return a list of key (bit) numbers for each 1 in keys_as_byte."""
-    keys_as_int = int.from_bytes(keys_as_byte, 'little')
+    keys_as_int = int.from_bytes(keys_as_byte, byteorder='little')
     return [
         key
         for key in range(num_keys)
@@ -37,10 +37,6 @@ class CAP1296:
     
         self.write = lambda r, b: self.i2c.writeto_mem(self._addr, r, b)
         self.read = lambda r, n: self.i2c.readfrom_mem(self._addr, r, n)
-
-    @property
-    def address(self):
-        return self._addr
 
     def enable_interrupt(self, keys: list):
         self.write(INTERRUPT_ENABLE, _keys_to_byte(keys, default=b'\x3f'))
