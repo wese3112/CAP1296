@@ -19,6 +19,7 @@ def _keys_to_byte(keys: list, default=b'\x00') -> bytes:
     """Return a byte in which the bits X are 1 for each X in the list keys."""
     return bytes([sum(map(lambda b: 1 << b, keys))]) if keys else default
 
+
 def _byte_to_keys(keys_as_byte: bytes, num_keys=6) -> list:
     """Return a list of key (bit) numbers for each 1 in keys_as_byte."""
     keys_as_int = int.from_bytes(keys_as_byte, 'little')
@@ -51,7 +52,11 @@ class CAP1296:
         assert 2 not in keys, 'cannot set key 2 (CS3), it is the SG channel'
         self.write(SIGNAL_GUARD_ENABLE, _keys_to_byte(keys))
 
-    def read_keys(self):
+    def read_keys(self, as_byte=True):
         status = self.read(SENSOR_INPUT_STATUS, 1)
         self.write(MAIN_CONTROL, b'\x00')  # enables next touch reading
-        return int.from_bytes(status, 'little')
+
+        if as_byte:
+            return int.from_bytes(status, byteorder='little')
+        else:
+            return _byte_to_keys(status, num_keys=5)
