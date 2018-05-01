@@ -32,5 +32,6 @@ class TestCAP1296Driver(unittest.TestCase):
             expected = list(range(num_keys))
             self.assertEqual(cap1296._byte_to_keys(b'\xff', num_keys=num_keys), expected)
 
+
 if __name__ == '__main__':
     unittest.main()
