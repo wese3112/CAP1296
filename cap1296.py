@@ -22,7 +22,7 @@ def _keys_to_byte(keys: list, default=b'\x00') -> bytes:
 
 def _byte_to_keys(keys_as_byte: bytes, num_keys=6) -> list:
     """Return a list of key (bit) numbers for each 1 in keys_as_byte."""
-    keys_as_int = int.from_bytes(keys_as_byte, byteorder='little')
+    keys_as_int = int.from_bytes(keys_as_byte, 'little')
     return [
         key
         for key in range(num_keys)
@@ -41,6 +41,11 @@ class CAP1296:
     def enable_interrupt(self, keys: list):
         self.write(INTERRUPT_ENABLE, _keys_to_byte(keys, default=b'\x3f'))
 
+    def enable_multitouch(self, enable: bool, simultaneous_touches=1):
+        b_mult_t = (simultaneous_touches - 1) << 2
+        multi_touch_config = 0x00 if enable else 0x80 | b_mult_t
+        self.write(MULTIPLE_TOUCH_CONFIG, bytes([multi_touch_config]))
+
     def enable_keys(self, keys: list):
         self.write(SENSOR_INPUT_ENABLE, _keys_to_byte(keys, default=b'\x3f'))   
 
@@ -48,11 +53,11 @@ class CAP1296:
         assert 2 not in keys, 'cannot set key 2 (CS3), it is the SG channel'
         self.write(SIGNAL_GUARD_ENABLE, _keys_to_byte(keys))
 
-    def read_keys(self, as_byte=True):
+    def read_keys(self, as_list=False):
         status = self.read(SENSOR_INPUT_STATUS, 1)
         self.write(MAIN_CONTROL, b'\x00')  # enables next touch reading
 
-        if as_byte:
-            return int.from_bytes(status, byteorder='little')
-        else:
+        if as_list:
             return _byte_to_keys(status, num_keys=5)
+        else:
+            return status
