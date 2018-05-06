@@ -57,7 +57,4 @@ class CAP1296:
         status = self.read(SENSOR_INPUT_STATUS, 1)
         self.write(MAIN_CONTROL, b'\x00')  # enables next touch reading
 
-        if as_list:
-            return _byte_to_keys(status, num_keys=5)
-        else:
-            return status
+        return _byte_to_keys(status, num_keys=5) if as_list else status
